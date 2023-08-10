@@ -1,97 +1,128 @@
 #include<stdio.h>
 #include<string.h>
-#define MAX 23
-char infix[MAX];
-char postfix[MAX];
-char stack[MAX];
-int comp(char x);
-int top=-1;
-char ch;
-void infix_to_postfix(char infix[]);
+#include<stdbool.h>
+#include<stdlib.h>
+#define MAX 30
 void push(char);
 char pop();
-
-
+int cmp(char);
+void infix_to_postfix();
+bool isempty();
+bool isfull();
+char Stack[MAX];
+char Infix[MAX];
+char postfix[MAX];
+char ch;
+int top=-1;
 int main()
 {
-    printf("Please enter your infix expression:\n");
-    scanf("%[^\n]",infix);
-    infix_to_postfix(infix);
-    printf("%s \n",postfix);
+
+    infix_to_postfix();
+    return 0;
+
 }
-void push(char data)
-{
-top++;
-postfix[top]=data;
-}
-char pop()
-{
-    char data=stack[top];
+void push(char data){
+    if(isfull()== true){
+        printf("Stack overflow.\n");
+        exit(0);
+    }
+    else{
+    top++;
+    Stack[top]=data;
+    }}
+char pop(){
+    if(isempty()== true){
+        printf("Stack Underflow.\n");
+        exit(0);
+    }
+    else{
+  char data=Stack[top];
     top--;
     return data;
-    }
-void infix_to_postfix(char infix[])
-{
+}}
+void infix_to_postfix(){
+  printf("Please enter your expression:\n");
+  scanf("%[^\n]",Infix);
     int i=0;
     int j=0;
-    
-    
-    while(infix[i]!='\0'){
-        ch=infix[i];
-        if(ch=='(')
-        {
-            top++;
-            stack[top]=ch;
-        }
-       else if(ch=='+' || ch=='-'|| ch=='*' || ch=='/' || ch=='^' || ch=='$')
-        {
-            while(comp(ch)<=comp(stack[top]))
+
+while(Infix[i]!='\0')
+{
+    ch=Infix[i];
+    if(ch=='(')
+    {
+        push(ch);
+    }
+    else if(ch==')'){
+      while(Stack[top]!='(')
+      {
+        postfix[j]=pop();
+        j++;
+      }
+      pop();
+
+    }
+    else if(ch=='^' || ch=='$' || ch=='*' || ch=='/' || ch=='+' || ch=='-')
+    {
+            while((isempty()==false || Stack[top]=='(') && cmp(ch)<=cmp(Stack[top]))
             {
-
-                postfix[j]= pop();
-                j++;
-
-            }
-            top++;
-            stack[top]=ch;
-        }
-            else if(infix[i]==')'){
-                while(stack[top]!='(')
-                {
                 postfix[j]=pop();
                 j++;
-                }
-                pop();
             }
-            else{
-                postfix[j]=ch;
-                j++;
-            }
-        
-        i++;
-    }
-    while(top!=-1)
+            push(ch);
+        }
+        else{
+            postfix[j]=ch;
+            j++;
+        }
+
+
+    i++;
+}
+while(Stack[top]!='\0')
 {
+    if(Stack[top]!='('){
     postfix[j]=pop();
     j++;
+    }
 }
+printf("The postfix expression is: %s\n",postfix);
 }
-
-int comp(char x)
+int cmp(char ch)
 {
-    if(x=='^' || x=='$')
-    {
-        return 3;
-    }
-    else if(x=='*' || x=='/')
-    {
-        return 2;
-    }
-     else if(x=='+' || x=='-')
-    {
-        return 1;
-    }
+if(ch=='^' || ch=='$')
+{
+    return 3;
+}
+else if(ch=='*' || ch=='/')
+{
+    return 2;
+}
+else if(ch=='+' || ch=='-'){
+    return 1;
+}
     else{
         return 0;
     }
+}
+
+
+bool isempty(){
+        if(top==-1){
+            return true;
+        }
+        else{
+            return false;
+        }
+    
+}
+bool isfull(){
+  if(top==MAX-1){
+    return true;
+  }
+  else{
+    return false;
+  }
+    
+    
 }
